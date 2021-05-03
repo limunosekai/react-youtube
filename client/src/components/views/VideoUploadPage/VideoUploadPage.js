@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Typography, Button, Form, message, Icon, Input } from 'antd';
 import Dropzone from 'react-dropzone';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -19,10 +20,11 @@ const categoriyOptions = [
 ];
 
 function VideoUploadPage(props) {
+  const user = useSelector((state) => state.user);
   const [VedioTitle, setVideoTitle] = useState('');
   const [Description, setDescription] = useState('');
   const [Private, setPrivate] = useState(0);
-  const [Categoriy, setCategoriy] = useState('Film & Animation');
+  const [Category, setCategory] = useState('Film & Animation');
   const [FilePath, setFilePath] = useState('');
   const [Duration, setDuration] = useState('');
   const [ThumbnailPath, setThumbnailPath] = useState('');
@@ -40,7 +42,7 @@ function VideoUploadPage(props) {
   };
 
   const onCategoryChange = (e) => {
-    setCategoriy(e.currentTarget.value);
+    setCategory(e.currentTarget.value);
   };
 
   const onDropHandler = (files) => {
@@ -76,7 +78,29 @@ function VideoUploadPage(props) {
   };
 
   const onSubmitHandler = (e) => {
-    return false;
+    e.preventDefault();
+
+    const variables = {
+      writer: user.userData._id,
+      title: VedioTitle,
+      description: Description,
+      privacy: Private,
+      filePath: FilePath,
+      category: Category,
+      duration: Duration,
+      thumbnail: ThumbnailPath,
+    };
+
+    axios.post('/api/video/uploadvideo', variables).then((response) => {
+      if (response.data.success) {
+        message.success('비디오 업로드 성공');
+        setTimeout(() => {
+          props.history.push('/');
+        }, 3000);
+      } else {
+        alert('비디오 업로드 실패');
+      }
+    });
   };
 
   return (
