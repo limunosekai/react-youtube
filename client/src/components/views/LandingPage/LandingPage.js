@@ -12,7 +12,6 @@ function LandingPage() {
   useEffect(() => {
     axios.get('/api/video/getvideos').then((response) => {
       if (response.data.success) {
-        console.log(response.data);
         setVideo(response.data.videos);
       } else {
         alert('비디오 로딩 실패');

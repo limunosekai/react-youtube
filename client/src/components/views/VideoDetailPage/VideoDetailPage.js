@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, List, Avatar } from 'antd';
 import Axios from 'axios';
 import SideVideo from './Sections/SideVideo';
+import Subscribe from './Sections/Subscribe';
 
 import './VideoDetailPage.css';
 
@@ -16,7 +17,6 @@ function VideoDetailPage(props) {
   useEffect(() => {
     Axios.post('/api/video/getvideo', variable).then((response) => {
       if (response.data.success) {
-        console.log(response.data);
         setVideoDetail(response.data.video);
       } else {
         alert('비디오 로딩 실패');
@@ -34,10 +34,21 @@ function VideoDetailPage(props) {
               src={`http://localhost:5000/${VideoDetail.filePath}`}
               controls
             />
-            <List.Item actions>
+            <List.Item
+              actions={[
+                <Subscribe
+                  userTo={VideoDetail.writer._id}
+                  userFrom={localStorage.getItem('userId')}
+                />,
+              ]}
+            >
               <List.Item.Meta
-                avatar={VideoDetail.writer.image}
-                title={VideoDetail.writer.name}
+                avatar={
+                  <Avatar
+                    src={VideoDetail.writer && VideoDetail.writer.image}
+                  />
+                }
+                title={<a href='https://ant.design'>{VideoDetail.title}</a>}
                 description={VideoDetail.description}
               />
             </List.Item>
