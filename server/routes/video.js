@@ -52,12 +52,22 @@ router.post('/uploadvideo', (req, res) => {
 });
 
 router.get('/getvideos', (req, res) => {
-  // 비디오를 DB에서 가져와서 클라에게 전송
+  // 전체 비디오를 DB에서 가져와서 클라에게 전송
   Video.find()
     .populate('writer')
     .exec((err, videos) => {
       if (err) return res.status(400).send(err);
       res.status(200).json({ success: true, videos });
+    });
+});
+
+router.post('/getvideo', (req, res) => {
+  // 비디오를 DB에서 가져와서 클라에게 전송
+  Video.findOne({ _id: req.body.videoId })
+    .populate('writer')
+    .exec((err, video) => {
+      if (err) return res.status(400).send(err);
+      return res.status(200).json({ success: true, video });
     });
 });
 
