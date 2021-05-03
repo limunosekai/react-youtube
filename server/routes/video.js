@@ -51,6 +51,16 @@ router.post('/uploadvideo', (req, res) => {
   });
 });
 
+router.get('/getvideos', (req, res) => {
+  // 비디오를 DB에서 가져와서 클라에게 전송
+  Video.find()
+    .populate('writer')
+    .exec((err, videos) => {
+      if (err) return res.status(400).send(err);
+      res.status(200).json({ success: true, videos });
+    });
+});
+
 router.post('/thumbnail', (req, res) => {
   // 클라에서 보낸 데이터로 썸네일 생성, 비디오 러닝타임 가져오기
 
