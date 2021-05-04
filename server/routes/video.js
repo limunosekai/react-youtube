@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { Video } = require('../models/Video');
+const { Subscriber } = require('../models/Subscriber');
 
-const { auth } = require('../middleware/auth');
 const multer = require('multer');
 var ffmpeg = require('fluent-ffmpeg');
 
@@ -49,6 +49,29 @@ router.post('/uploadvideo', (req, res) => {
     if (err) return res.json({ success: false, err });
     res.status(200).json({ success: true });
   });
+});
+
+router.post('/getsubscriptionvideos', (req, res) => {
+  // 로그인한 유저의 id로 구독한 사람을 찾음
+  Subscriber.find({ userFrom: req.body.userFrom }).exec(
+    (err, subscriberInfo) => {
+      if (err) return res.status(400).send(err);
+
+      let subscribedUser = [];
+
+      subscriberInfo.map((subscriber, i) => {
+        subscribedUser.push(subscriber.userTo);
+      });
+
+      // 찾은 사람의 비디오 정보를 가져옴
+      Video.find({ writer: { $in: subscribedUser } })
+        .populate('writer')
+        .exec((err, videos) => {
+          if (err) return res.status(400).send(err);
+          return res.status(200).json({ success: true, videos });
+        });
+    }
+  );
 });
 
 router.get('/getvideos', (req, res) => {
