@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 
 function Comment(props) {
   const user = useSelector((state) => state.user);
@@ -43,17 +44,27 @@ function Comment(props) {
         props.commentList.map((comment, index) => {
           return (
             !comment.responseTo && (
-              <SingleComment
-                key={index}
-                refreshFunc={props.refreshFunc}
-                comment={comment}
-                postId={videoId}
-              />
+              <React.Fragment key={index}>
+                <SingleComment
+                  refreshFunc={props.refreshFunc}
+                  comment={comment}
+                  postId={videoId}
+                />
+                <ReplyComment
+                  postId={videoId}
+                  parentCommentId={comment._id}
+                  refreshFunc={props.refreshFunc}
+                  commentList={props.commentList}
+                />
+              </React.Fragment>
             )
           );
         })}
       {/* Root Component Form */}
-      <form style={{ display: 'flex' }} onSubmit={submitHandler}>
+      <form
+        style={{ display: 'flex', marginTop: '30px' }}
+        onSubmit={submitHandler}
+      >
         <textarea
           style={{ width: '80%', borderRadius: '5px', boxSizing: 'border-box' }}
           onChange={changeHandler}

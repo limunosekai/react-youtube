@@ -15,7 +15,7 @@ function SingleComment(props) {
   };
 
   const changeHandler = (e) => {
-    setCommentValue(e.currentTarget.CommentValue);
+    setCommentValue(e.currentTarget.value);
   };
 
   const submitHandler = (e) => {
